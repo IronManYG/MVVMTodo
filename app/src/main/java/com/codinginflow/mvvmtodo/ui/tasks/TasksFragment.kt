@@ -1,15 +1,15 @@
 package com.codinginflow.mvvmtodo.ui.tasks
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.codinginflow.mvvmtodo.R
 import com.codinginflow.mvvmtodo.databinding.FragmentTasksBinding
+import com.codinginflow.mvvmtodo.ui.util.onQueryTextChanged
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,12 +21,13 @@ class TasksFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         binding = FragmentTasksBinding.inflate(layoutInflater)
 
@@ -46,6 +47,36 @@ class TasksFragment : Fragment() {
 
         // Inflate the layout for this fragment
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_fragment_tasks, menu)
+
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem.actionView as SearchView
+
+        searchView.onQueryTextChanged {
+            viewModel.searchQuery.value = it
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_sort_by_name -> {
+              true
+            }
+            R.id.action_sort_by_date_created -> {
+                true
+            }
+            R.id.action_hide_completed_tasks -> {
+                item.isChecked = !item.isChecked
+                true
+            }
+            R.id.action_delete_all_completed -> {
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
 }
